@@ -1,0 +1,119 @@
+<Window x:Class="PizzeriaApp.Views.CommandeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PizzeriaApp.Views"
+        xmlns:converters="clr-namespace:PizzeriaApp.Converters"
+        mc:Ignorable="d"
+        Title="{Binding WindowTitle}" Height="500" Width="800"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+    
+    <Window.Resources>
+        <converters:PriceConverter x:Key="PriceConverter"/>
+        <converters:DateConverter x:Key="DateConverter"/>
+    </Window.Resources>
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" Text="Création d'une Nouvelle Commande" 
+                   FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+        
+        <!-- Informations de la commande -->
+        <Grid Grid.Row="1" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Label Grid.Column="0" Content="Numéro:" Margin="0,5"/>
+            <TextBox Grid.Column="1" Text="{Binding Commande.Numero}" IsReadOnly="True" Margin="0,5"/>
+            
+            <Label Grid.Column="2" Content="Date:" Margin="5,5"/>
+            <TextBox Grid.Column="3" Text="{Binding Commande.DateCommande, Converter={StaticResource DateConverter}}" 
+                     IsReadOnly="True" Margin="0,5"/>
+        </Grid>
+        
+        <!-- Sélection des pizzas -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Liste des pizzas disponibles -->
+            <GroupBox Grid.Column="0" Header="Pizzas Disponibles">
+                <DataGrid ItemsSource="{Binding DisponiblePizzas}" 
+                          SelectedItem="{Binding SelectedPizza}"
+                          AutoGenerateColumns="False" 
+                          IsReadOnly="True"
+                          SelectionMode="Single"
+                          AlternatingRowBackground="AliceBlue"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserReorderColumns="False"
+                          CanUserResizeRows="False"
+                          CanUserSortColumns="True"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*"/>
+                        <DataGridTextColumn Header="Prix" Binding="{Binding Prix, Converter={StaticResource PriceConverter}}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+            
+            <!-- Boutons d'ajout/suppression -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0">
+                <Button Content="&gt;&gt;" Command="{Binding AddPizzaToCommandeCommand}" Padding="5" Margin="0,0,0,10"/>
+                <Button Content="&lt;&lt;" Command="{Binding RemovePizzaFromCommandeCommand}" Padding="5"/>
+            </StackPanel>
+            
+            <!-- Liste des pizzas dans la commande -->
+            <GroupBox Grid.Column="2" Header="Pizzas dans la Commande">
+                <DataGrid ItemsSource="{Binding CommandePizzas}" 
+                          SelectedItem="{Binding SelectedCommandePizza}"
+                          AutoGenerateColumns="False" 
+                          IsReadOnly="True"
+                          SelectionMode="Single"
+                          AlternatingRowBackground="AliceBlue"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          CanUserReorderColumns="False"
+                          CanUserResizeRows="False"
+                          CanUserSortColumns="True"
+                          HeadersVisibility="Column"
+                          GridLinesVisibility="Horizontal">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Nom" Binding="{Binding Nom}" Width="*"/>
+                        <DataGridTextColumn Header="Prix" Binding="{Binding Prix, Converter={StaticResource PriceConverter}}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+        
+        <!-- Prix total -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,10">
+            <TextBlock Text="Prix Total:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBlock Text="{Binding PrixTotal, Converter={StaticResource PriceConverter}}" 
+                       FontWeight="Bold" FontSize="16" VerticalAlignment="Center"/>
+        </StackPanel>
+        
+        <!-- Boutons -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Annuler" IsCancel="True" Width="80" Margin="0,0,10,0" Click="CancelButton_Click"/>
+            <Button Content="Valider" IsDefault="True" Width="80" Command="{Binding SaveCommandeCommand}" Click="SaveButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
